@@ -33,3 +33,12 @@ Pode ser acessado direto no navegador ou instalado na tela inicial do celular co
   "data": "2025-09-08",
   "link": "https://exemplo.com"
 }
+local-pulse/
+├─ index.html
+├─ styles.css
+├─ app.js
+├─ noticias.json
+├─ manifest.webmanifest
+├─ sw.js
+├─ icon-192.png
+└─ icon-512.png
