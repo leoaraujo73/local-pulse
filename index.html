@@ -4,22 +4,31 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Local Pulse</title>
+
+  <!-- PWA -->
   <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="stylesheet" href="./styles.css" />
   <meta name="theme-color" content="#0f172a" />
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
+  <!-- Cabeçalho -->
   <header class="app-header">
     <h1>Local Pulse</h1>
     <input id="searchInput" class="search" placeholder="Buscar notícias..." />
   </header>
 
+  <!-- Filtros de categoria -->
   <nav id="categories" class="categories"></nav>
 
+  <!-- Lista de cards -->
   <main id="feed" class="feed" aria-live="polite"></main>
 
+  <!-- MOLDE DE CARD (usado pelo app.js para clonar) -->
   <template id="cardTemplate">
     <article class="card">
+      <img class="card-img" data-img alt="" loading="lazy" />
       <div class="card-meta">
         <span class="pill" data-category></span>
         <time data-date></time>
@@ -33,6 +42,7 @@
     </article>
   </template>
 
+  <!-- Leitor (modal) -->
   <dialog id="reader" class="reader">
     <article>
       <header class="reader-header">
@@ -43,12 +53,15 @@
       <p class="reader-meta"><time id="readerDate"></time></p>
       <div id="readerBody" class="reader-body"></div>
       <footer class="reader-footer">
-        <a id="readerLink" class="btn" target="_blank" rel="noopener">Abrir fonte</a>
+        <a id="readerLink" class="btn" target="__blank" rel="noopener">Abrir fonte</a>
       </footer>
     </article>
   </dialog>
 
+  <!-- Script principal -->
   <script src="./app.js" type="module"></script>
+
+  <!-- Service Worker (PWA) -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -58,3 +71,4 @@
   </script>
 </body>
 </html>
+
