@@ -7,18 +7,10 @@
       "categoria": "Mineração",
       "titulo": "Novo layout de britagem em fase de testes em cooperativa local",
       "descricao": "Projeto prevê otimização de esteiras e moinhos para cobre.",
-      "conteudo": "O projeto considera alimentador primário, moinho de martelos, transportadoras de 7 m e 7,5 m e moinho de bolas, com posterior flotação. Ajustes visam melhor manutenção e segurança operacional.",
+      "conteudo": "O projeto considera alimentador primário, moinho de martelos, transportadoras e moinho de bolas, com posterior flotação. Ajustes visam melhor manutenção e segurança operacional.",
       "data": "2025-09-08",
-      "link": "https://www.mining.com/"
-    },
-    {
-      "id": "min-002",
-      "categoria": "Mineração",
-      "titulo": "Estudo aponta potencial de corretivo agrícola em jazida de Matões",
-      "descricao": "Laudo químico indica alto teor de CaO e MgO.",
-      "conteudo": "O levantamento químico revelou a presença significativa de CaO e MgO, essenciais para corretivo agrícola e aplicações industriais.",
-      "data": "2025-09-08",
-      "link": "https://www.gov.br/anm/pt-br"
+      "link": "https://www.mining.com/",
+      "imagem": "https://images.unsplash.com/photo-1504093376055-b3094b674dcb?q=80&w=1200"
     },
     {
       "id": "coop-001",
@@ -27,34 +19,8 @@
       "descricao": "Cooperados aprovam datas trimestrais.",
       "conteudo": "Calendário fixa prestação de contas trimestral com auditoria independente e publicação online dos relatórios.",
       "data": "2025-09-08",
-      "link": "https://www.ocb.org.br/"
-    },
-    {
-      "id": "coop-002",
-      "categoria": "Cooperativismo",
-      "titulo": "Debate sobre governança em cooperativas de mineração ganha força",
-      "descricao": "Lideranças pedem mais voz para a base.",
-      "conteudo": "Fortalecimento de governança, participação efetiva dos cooperados e combate a irregularidades.",
-      "data": "2025-09-08",
-      "link": "https://www.brasilcooperativo.coop.br/"
-    },
-    {
-      "id": "pol-001",
-      "categoria": "Política Local",
-      "titulo": "Audiência pública discute mineração sustentável no município",
-      "descricao": "Vereadores e sociedade civil debatem impactos ambientais.",
-      "conteudo": "Propostas de fiscalização ambiental e incentivo à mineração sustentável.",
-      "data": "2025-09-08",
-      "link": "https://www.camara.leg.br/"
-    },
-    {
-      "id": "pol-002",
-      "categoria": "Política Local",
-      "titulo": "Eleições municipais terão jovem empresária como pré-candidata",
-      "descricao": "Perfil de mulher advogada e empresária ganha apoio local.",
-      "conteudo": "Bandeiras: inovação, emprego e empreendedorismo.",
-      "data": "2025-09-08",
-      "link": "https://www.tse.jus.br/"
+      "link": "https://www.ocb.org.br/",
+      "imagem": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1200"
     },
     {
       "id": "eco-001",
@@ -63,7 +29,38 @@
       "descricao": "Cenário reforça plano de curto prazo para renda dos cooperados.",
       "conteudo": "Venda direta e beneficiamento podem aumentar a margem.",
       "data": "2025-09-08",
-      "link": "https://valor.globo.com/financas/"
+      "link": "https://valor.globo.com/financas/",
+      "imagem": "https://images.unsplash.com/photo-1610375229736-2d1590f1a60a?q=80&w=1200"
+    },
+    {
+      "id": "pol-001",
+      "categoria": "Política Local",
+      "titulo": "Audiência pública discute mineração sustentável no município",
+      "descricao": "Vereadores e sociedade civil debatem impactos ambientais.",
+      "conteudo": "Propostas de fiscalização ambiental e incentivo à mineração sustentável.",
+      "data": "2025-09-08",
+      "link": "https://www.camara.leg.br/",
+      "imagem": "https://images.unsplash.com/photo-1553532435-93d532a45f38?q=80&w=1200"
+    },
+    {
+      "id": "pol-002",
+      "categoria": "Política Local",
+      "titulo": "Eleições municipais terão jovem empresária como pré-candidata",
+      "descricao": "Perfil de mulher advogada e empresária ganha apoio local.",
+      "conteudo": "Bandeiras: inovação, emprego e empreendedorismo.",
+      "data": "2025-09-08",
+      "link": "https://www.tse.jus.br/",
+      "imagem": "https://images.unsplash.com/photo-1522204501961-7f1f2e3c1a5a?q=80&w=1200"
+    },
+    {
+      "id": "coop-002",
+      "categoria": "Cooperativismo",
+      "titulo": "Debate sobre governança em cooperativas de mineração ganha força",
+      "descricao": "Lideranças pedem mais voz para a base.",
+      "conteudo": "Fortalecimento de governança, participação efetiva dos cooperados e combate a irregularidades.",
+      "data": "2025-09-08",
+      "link": "https://www.brasilcooperativo.coop.br/",
+      "imagem": "https://images.unsplash.com/photo-1573497019409-74f5a08d7a3c?q=80&w=1200"
     },
     {
       "id": "eco-002",
@@ -72,7 +69,19 @@
       "descricao": "Novos projetos aumentam emprego e renda.",
       "conteudo": "Projeções positivas para comércio e serviços locais.",
       "data": "2025-09-08",
-      "link": "https://g1.globo.com/economia/"
+      "link": "https://g1.globo.com/economia/",
+      "imagem": "https://images.unsplash.com/photo-1592496001020-9960f03f2f61?q=80&w=1200"
+    },
+    {
+      "id": "min-002",
+      "categoria": "Mineração",
+      "titulo": "Estudo aponta potencial de corretivo agrícola em jazida de Matões",
+      "descricao": "Laudo químico indica alto teor de CaO e MgO.",
+      "conteudo": "O levantamento químico revelou a presença significativa de CaO e MgO, essenciais para corretivo agrícola e aplicações industriais.",
+      "data": "2025-09-08",
+      "link": "https://www.gov.br/anm/pt-br",
+      "imagem": "https://images.unsplash.com/photo-1501644898242-cfea317d8cf2?q=80&w=1200"
     }
   ]
 }
+
