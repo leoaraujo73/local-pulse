@@ -60,55 +60,9 @@ function renderFeed() {
       node.querySelector('[data-title]').textContent = item.titulo;
       node.querySelector('[data-desc]').textContent = item.descricao || '';
 
-      // LINK no card: só aparece se tiver URL válida
-      const linkEl = node.querySelector('[data-link]');
-      if (item.link && /^https?:\/\//i.test(item.link)) {
-        linkEl.href = item.link;
-        linkEl.setAttribute('target', '_blank');
-        linkEl.setAttribute('rel', 'noopener');
-        linkEl.style.display = 'inline-flex';
-      } else {
-        linkEl.remove();
-      }
-
-      node.querySelector('[data-open]').addEventListener('click', () => openReader(item));
-      feed.appendChild(node);
-    });
-}
-
-function openReader(item) {
-  const dlg = document.getElementById('reader');
-  document.getElementById('readerCat').textContent = item.categoria;
-  document.getElementById('readerTitle').textContent = item.titulo;
-  document.getElementById('readerDate').textContent = formatDate(item.data);
-  document.getElementById('readerBody').innerHTML = (item.conteudo || item.descricao || '')
-    .replace(/\n/g, '<br/>');
-
-  const link = document.getElementById('readerLink');
-  if (item.link && /^https?:\/\//i.test(item.link)) {
-    link.href = item.link;
-    link.style.display = 'inline-flex';
-  } else {
-    link.style.display = 'none';
-  }
-  dlg.showModal();
-}
-
-function setupEvents() {
-  document.getElementById('searchInput').addEventListener('input', filterAndRender);
-  document.getElementById('closeReader').addEventListener('click', () => {
-    document.getElementById('reader').close();
-  });
-}
-
-(async function init(){
-  try {
-    await loadData();
-    setupEvents();
-    renderCategories();
-    filterAndRender();
-  } catch (e) {
-    document.getElementById('feed').innerHTML = '<p style="color:#fca5a5">Erro: '+ e.message +'</p>';
-  }
-})();
-
+      // IMAGEM no card: só aparece se tiver URL válida
+      const imgEl = node.querySelector('[data-img]');
+      if (item.imagem && /^https?:\/\//i.test(item.imagem)) {
+        imgEl.src = item.imagem;
+        imgEl.alt = item.titulo || 'imagem da notícia';
+        imgEl.style.display = 'block';
