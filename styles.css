@@ -1,0 +1,39 @@
+:root {
+  --bg: #0b1220;
+  --panel: #0f172a;
+  --muted: #94a3b8;
+  --text: #e2e8f0;
+  --brand: #22d3ee;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial;
+  background: linear-gradient(180deg, #0b1220, #0b1220 60%, #0f172a);
+  color: var(--text);
+}
+.app-header { display: flex; gap: 12px; align-items: center; padding: 16px; background: var(--panel); position: sticky; top: 0; z-index: 10; }
+.app-header h1 { margin: 0; font-size: 20px; }
+.search { flex: 1; padding: 10px 12px; border-radius: 10px; border: 1px solid #1e293b; background: #0b1220; color: var(--text); }
+
+.categories { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; border-bottom: 1px solid #1e293b; background: #0b1220; position: sticky; top: 58px; z-index: 9; }
+.cat-btn { white-space: nowrap; padding: 8px 12px; border-radius: 999px; border: 1px solid #1e293b; background: #0f172a; color: var(--text); cursor: pointer; }
+.cat-btn.active { outline: 2px solid var(--brand); }
+
+.feed { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; padding: 16px; }
+.card { background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.card-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+.pill { display: inline-block; border: 1px solid #1e293b; background: #0b1220; color: var(--text); padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+.card h3 { margin: 0; font-size: 18px; }
+.card p { margin: 0; color: var(--muted); }
+.card-actions { display: flex; gap: 8px; }
+.btn { background: var(--brand); color: #001018; padding: 8px 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; }
+.btn-ghost { background: transparent; border: 1px solid #1e293b; color: var(--text); text-decoration: none; padding: 8px 12px; border-radius: 10px; }
+
+.reader { width: min(900px, 95%); margin: auto; border: none; border-radius: 16px; padding: 0; }
+.reader::backdrop { background: rgba(0,0,0,.6); }
+.reader article { background: #0f172a; color: var(--text); border: 1px solid #1e293b; border-radius: 16px; padding: 16px; }
+.reader-header { display: flex; justify-content: space-between; align-items: center; }
+.reader-meta { color: var(--muted); margin: 8px 0; }
+.reader-body { line-height: 1.6; color: var(--text); }
+.reader-footer { margin-top: 16px; display: flex; justify-content: flex-end; }

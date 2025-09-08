@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Local Pulse</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="stylesheet" href="./styles.css" />
+  <meta name="theme-color" content="#0f172a" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Local Pulse</h1>
+    <input id="searchInput" class="search" placeholder="Buscar notícias..." />
+  </header>
+
+  <nav id="categories" class="categories"></nav>
+
+  <main id="feed" class="feed" aria-live="polite"></main>
+
+  <template id="cardTemplate">
+    <article class="card">
+      <div class="card-meta">
+        <span class="pill" data-category></span>
+        <time data-date></time>
+      </div>
+      <h3 data-title></h3>
+      <p data-desc></p>
+      <div class="card-actions">
+        <button class="btn" data-open>LER</button>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" data-link>LINK</a>
+      </div>
+    </article>
+  </template>
+
+  <dialog id="reader" class="reader">
+    <article>
+      <header class="reader-header">
+        <button class="btn" id="closeReader">Fechar</button>
+        <span class="pill" id="readerCat"></span>
+      </header>
+      <h2 id="readerTitle"></h2>
+      <p class="reader-meta"><time id="readerDate"></time></p>
+      <div id="readerBody" class="reader-body"></div>
+      <footer class="reader-footer">
+        <a id="readerLink" class="btn" target="_blank" rel="noopener">Abrir fonte</a>
+      </footer>
+    </article>
+  </dialog>
+
+  <script src="./app.js" type="module"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js');
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+{
+  "versao": 1,
+  "fonte": "Local Pulse",
+  "items": [
+    {
+      "id": "min-001",
+      "categoria": "Mineração",
+      "titulo": "Novo layout de britagem em fase de testes em cooperativa local",
+      "descricao": "Projeto prevê otimização de esteiras e moinhos para cobre.",
+      "conteudo": "O projeto considera alimentador primário, moinho de martelos, transportadoras de 7 m e 7,5 m e moinho de bolas, com posterior flotação. Ajustes visam melhor manutenção e segurança operacional.",
+      "data": "2025-09-08",
+      "link": ""
+    },
+    {
+      "id": "min-002",
+      "categoria": "Mineração",
+      "titulo": "Estudo aponta potencial de corretivo agrícola em jazida de Matões",
+      "descricao": "Laudo químico indica alto teor de CaO e MgO.",
+      "conteudo": "O levantamento químico revelou a presença significativa de CaO e MgO, elementos essenciais para a produção de corretivo agrícola, além de aplicações na indústria. O estudo sugere viabilidade econômica simplificada para produtores da região.",
+      "data": "2025-09-08",
+      "link": ""
+    },
+    {
+      "id": "coop-001",
+      "categoria": "Cooperativismo",
+      "titulo": "Assembleia define calendário fixo de prestação de contas",
+      "descricao": "Cooperados aprovam datas trimestrais.",
+      "conteudo": "Em assembleia geral, foi aprovado um calendário fixo de prestação de contas, a ser realizado trimestralmente. A medida inclui auditoria independente e publicação online dos relatórios.",
+      "data": "2025-09-08",
+      "link": ""
+    },
+    {
+      "id": "coop-002",
+      "categoria": "Cooperativismo",
+      "titulo": "Debate sobre governança em cooperativas de mineração ganha força",
+      "descricao": "Lideranças pedem mais voz para a base.",
+      "conteudo": "O debate destacou a necessidade de fortalecer a governança, garantindo a participação efetiva dos cooperados nas decisões estratégicas, além de reforçar mecanismos de combate a irregularidades.",
+      "data": "2025-09-08",
+      "link": ""
+    },
+    {
+      "id": "pol-001",
+      "categoria": "Política Local",
+      "titulo": "Audiência pública discute mineração sustentável no município",
+      "descricao": "Vereadores e sociedade civil debatem impactos ambientais.",
+      "conteudo": "Durante a audiência pública, foram apresentadas propostas de fiscalização ambiental e de incentivo à mineração sustentável, com foco na proteção de rios e matas ciliares.",
+      "data": "2025-09-08",
+      "link": ""
+    },
+    {
+      "id": "pol-002",
+      "categoria": "Política Local",
+      "titulo": "Eleições municipais terão jovem empresária como pré-candidata a vereadora",
+      "descricao": "Perfil de mulher advogada e empresária ganha apoio popular.",
+      "conteudo": "A pré-candidatura traz como bandeira inovação, geração de empregos e fortalecimento do empreendedorismo local, atraindo atenção do eleitorado jovem e feminino.",
+      "data": "2025-09-08",
+      "link": ""
+    },
+    {
+      "id": "eco-001",
+      "categoria": "Economia",
+      "titulo": "Cotação do ouro ultrapassa R$ 600 o grama e anima cooperados",
+      "descricao": "Cenário reforça plano de curto prazo para geração de renda.",
+      "conteudo": "Com a alta sustentada do ouro, estratégias de venda direta e investimentos em beneficiamento podem aumentar a margem de lucro dos cooperados.",
+      "data": "2025-09-08",
+      "link": ""
+    },
+    {
+      "id": "eco-002",
+      "categoria": "Economia",
+      "titulo": "Investimentos em mineração movimentam economia regional",
+      "descricao": "Novos projetos aumentam emprego e renda.",
+      "conteudo": "O fluxo de investimentos no setor mineral deve gerar centenas de novos postos de trabalho diretos e indiretos, além de estimular o comércio e serviços locais.",
+      "data": "2025-09-08",
+      "link": ""
+    }
+  ]
+}
