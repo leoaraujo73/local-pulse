@@ -1,4 +1,5 @@
-const state = {
+# Recreate the updated app.js after state reset
+updated_app_js = """const state = {
   data: null,
   filtered: [],
   activeCat: 'Todas',
@@ -59,7 +60,18 @@ function renderFeed() {
       node.querySelector('[data-date]').textContent = formatDate(item.data);
       node.querySelector('[data-title]').textContent = item.titulo;
       node.querySelector('[data-desc]').textContent = item.descricao || '';
-      node.querySelector('[data-link]').href = item.link || '#';
+
+      // LINK: só mostra se houver URL válida (http/https)
+      const linkEl = node.querySelector('[data-link]');
+      if (item.link && /^https?:\\/\\//i.test(item.link)) {
+        linkEl.href = item.link;
+        linkEl.setAttribute('target', '_blank');
+        linkEl.setAttribute('rel', 'noopener');
+        linkEl.style.display = 'inline-flex';
+      } else {
+        linkEl.remove();
+      }
+
       node.querySelector('[data-open]').addEventListener('click', () => openReader(item));
       feed.appendChild(node);
     });
@@ -71,10 +83,15 @@ function openReader(item) {
   document.getElementById('readerTitle').textContent = item.titulo;
   document.getElementById('readerDate').textContent = formatDate(item.data);
   document.getElementById('readerBody').innerHTML = (item.conteudo || item.descricao || '')
-    .replace(/\n/g, '<br/>');
+    .replace(/\\n/g, '<br/>');
+
   const link = document.getElementById('readerLink');
-  if (item.link) { link.href = item.link; link.style.display = 'inline-flex'; }
-  else { link.style.display = 'none'; }
+  if (item.link && /^https?:\\/\\//i.test(item.link)) {
+    link.href = item.link;
+    link.style.display = 'inline-flex';
+  } else {
+    link.style.display = 'none';
+  }
   dlg.showModal();
 }
 
@@ -94,4 +111,7 @@ function setupEvents() {
   } catch (e) {
     document.getElementById('feed').innerHTML = '<p style="color:#fca5a5">Erro: '+ e.message +'</p>';
   }
-})();
+})();"""
+with open("/mnt/data/app.js", "w", encoding="utf-8") as f:
+    f.write(updated_app_js)
+"/mnt/data/app.js"
