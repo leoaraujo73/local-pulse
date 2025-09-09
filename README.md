@@ -15,6 +15,15 @@ Pode ser acessado direto no navegador ou instalado na tela inicial do celular co
 - Instalável como **PWA** (funciona offline básico).
 - Atualização fácil via arquivo `noticias.json`.
 
+## 🎨 Paleta de cores por categoria
+
+| Categoria        | Cor       |
+|------------------|-----------|
+| Mineração        | `#f59e0b` |
+| Cooperativismo   | `#8b5cf6` |
+| Economia         | `#10b981` |
+| Política Local   | `#ef4444` |
+
 ---
 
 ## 📰 Como atualizar as notícias
