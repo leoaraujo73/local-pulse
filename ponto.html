@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relógio de Ponto</title>
+  <style>
+    :root {
+      --bg: #1a2a4a;
+      --bg2: #223059;
+      --card: #1e3060;
+      --card2: #243570;
+      --teal: #27ae60;
+      --teal2: #2ecc71;
+      --teal-dim: #1d7a44;
+      --text: #e8edf5;
+      --text2: #a8b8d0;
+      --red: #e74c3c;
+      --orange: #f39c12;
+      --yellow: #f1c40f;
+      --border: #2d4070;
+      --radius: 12px;
+      --shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #0f1e3a 0%, #1a2a4a 100%);
+      padding: 16px 20px 12px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: 1px; color: var(--teal2); }
+    #live-clock {
+      font-size: 2rem;
+      font-weight: 200;
+      letter-spacing: 2px;
+      color: var(--text);
+      margin-top: 2px;
+    }
+    #live-date-label { font-size: 0.75rem; color: var(--text2); margin-top: 2px; }
+
+    /* ── Main layout ── */
+    main { max-width: 480px; margin: 0 auto; padding: 16px 14px 0; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .card-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text2);
+      margin-bottom: 14px;
+    }
+
+    /* ── Date selector ── */
+    .date-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    #date-input {
+      flex: 1;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 1rem;
+      padding: 10px 12px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    #date-input:focus { border-color: var(--teal); }
+    .btn-today {
+      background: var(--teal-dim);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-today:active { opacity: 0.7; }
+    #selected-weekday {
+      text-align: center;
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--text2);
+    }
+
+    /* ── Next action ── */
+    #next-action {
+      background: var(--bg2);
+      border-left: 3px solid var(--teal);
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: var(--teal2);
+      margin-bottom: 14px;
+    }
+    #next-action.complete { border-color: var(--yellow); color: var(--yellow); }
+    #next-action.day-done { border-color: var(--teal2); color: var(--teal2); }
+
+    /* ── Mark now button ── */
+    #btn-mark {
+      width: 100%;
+      background: linear-gradient(135deg, var(--teal-dim), var(--teal));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 18px;
+      transition: transform 0.1s, opacity 0.1s;
+      letter-spacing: 0.5px;
+    }
+    #btn-mark:active { transform: scale(0.97); opacity: 0.85; }
+    #btn-mark:disabled { background: var(--border); color: var(--text2); cursor: default; }
+
+    /* ── Time fields ── */
+    .time-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .time-field {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      position: relative;
+    }
+    .time-field:hover { border-color: var(--teal-dim); }
+    .time-field.active-next { border-color: var(--teal); box-shadow: 0 0 0 2px rgba(39,174,96,0.2); }
+    .time-field.filled { border-color: var(--teal-dim); }
+    .time-field-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); margin-bottom: 5px; }
+    .time-field-value {
+      font-size: 1.4rem;
+      font-weight: 300;
+      letter-spacing: 1px;
+      color: var(--text);
+    }
+    .time-field-value.empty { color: var(--border); font-size: 1.1rem; }
+    .time-field-edit { position: absolute; top: 8px; right: 8px; font-size: 0.7rem; color: var(--text2); opacity: 0; transition: opacity 0.2s; }
+    .time-field:hover .time-field-edit { opacity: 1; }
+
+    /* ── Reset button ── */
+    #btn-reset {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--red);
+      color: var(--red);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: background 0.2s;
+    }
+    #btn-reset:hover { background: rgba(231,76,60,0.1); }
+
+    /* ── Summary ── */
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .summary-item {
+      background: var(--bg2);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .summary-item.wide { grid-column: 1 / -1; }
+    .summary-item-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); margin-bottom: 5px; }
+    .summary-item-value { font-size: 1.2rem; font-weight: 600; }
+    .summary-item-value.ok { color: var(--teal2); }
+    .summary-item-value.warn { color: var(--yellow); }
+    .summary-item-value.bad { color: var(--red); }
+    .summary-item-value.muted { color: var(--text2); }
+
+    .balance-bar-wrap { margin-top: 8px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .balance-bar { height: 100%; border-radius: 3px; transition: width 0.4s; }
+
+    /* ── History ── */
+    .history-list { display: flex; flex-direction: column; gap: 8px; }
+    .history-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: border-color 0.2s;
+    }
+    .history-item:hover { border-color: var(--teal-dim); }
+    .history-item.selected { border-color: var(--teal); background: rgba(39,174,96,0.05); }
+    .history-date { font-size: 0.85rem; font-weight: 600; }
+    .history-times { font-size: 0.7rem; color: var(--text2); margin-top: 2px; }
+    .history-total { font-size: 0.9rem; font-weight: 600; }
+    .history-total.ok { color: var(--teal2); }
+    .history-total.bad { color: var(--red); }
+    .history-total.partial { color: var(--text2); }
+    #history-empty { text-align: center; color: var(--text2); font-size: 0.85rem; padding: 20px 0; }
+
+    /* ── Report ── */
+    .report-month-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .btn-nav {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #report-month-label { flex: 1; text-align: center; font-weight: 600; font-size: 0.95rem; }
+    .report-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .stat-box { background: var(--bg2); border-radius: 8px; padding: 10px; text-align: center; }
+    .stat-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); margin-bottom: 3px; }
+    .stat-value { font-size: 1rem; font-weight: 700; }
+    .report-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn-report {
+      background: var(--bg2);
+      border: 1px solid var(--teal-dim);
+      color: var(--teal2);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.2s;
+    }
+    .btn-report:hover { background: rgba(39,174,96,0.1); }
+
+    /* ── Modal / Edit overlay ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(10,15,30,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card2);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 100%;
+      max-width: 340px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .modal h3 { font-size: 1rem; margin-bottom: 16px; color: var(--teal2); }
+    .modal label { font-size: 0.8rem; color: var(--text2); display: block; margin-bottom: 6px; }
+    .modal input[type="time"] {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 1.5rem;
+      padding: 12px;
+      outline: none;
+      margin-bottom: 16px;
+    }
+    .modal input[type="time"]:focus { border-color: var(--teal); }
+    .modal-btns { display: flex; gap: 10px; }
+    .btn-save {
+      flex: 1;
+      background: var(--teal-dim);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .btn-cancel {
+      flex: 1;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .btn-clear-field {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--red);
+      color: var(--red);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    /* ── Confirm dialog ── */
+    .confirm-box {
+      text-align: center;
+    }
+    .confirm-box p { font-size: 0.9rem; color: var(--text2); margin-bottom: 18px; line-height: 1.5; }
+    .btn-confirm-yes {
+      width: 100%;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .btn-confirm-no {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    /* ── Print styles ── */
+    @media print {
+      body { background: #fff; color: #000; }
+      header, #date-card, #mark-card, #history-card, #report-card { display: none !important; }
+      #print-section { display: block !important; }
+    }
+    #print-section { display: none; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⏱ Relógio de Ponto</h1>
+  <div id="live-clock">00:00:00</div>
+  <div id="live-date-label"></div>
+</header>
+
+<main>
+  <!-- Date selector -->
+  <div class="card" id="date-card">
+    <div class="card-title">📅 Data de Trabalho</div>
+    <div class="date-row">
+      <input type="date" id="date-input" />
+      <button class="btn-today" onclick="goToday()">Hoje</button>
+    </div>
+    <div id="selected-weekday"></div>
+  </div>
+
+  <!-- Mark times -->
+  <div class="card" id="mark-card">
+    <div class="card-title">🕐 Marcação de Horários</div>
+    <div id="next-action">Pronto para marcar: <strong>Entrada</strong></div>
+    <button id="btn-mark" onclick="markNow()">⏰ Marcar Agora</button>
+    <div class="time-fields">
+      <div class="time-field" id="field-entry" onclick="editField('entry')">
+        <div class="time-field-label">Entrada</div>
+        <div class="time-field-value empty" id="val-entry">--:--</div>
+        <div class="time-field-edit">✏️</div>
+      </div>
+      <div class="time-field" id="field-lunchStart" onclick="editField('lunchStart')">
+        <div class="time-field-label">Saída Almoço</div>
+        <div class="time-field-value empty" id="val-lunchStart">--:--</div>
+        <div class="time-field-edit">✏️</div>
+      </div>
+      <div class="time-field" id="field-lunchEnd" onclick="editField('lunchEnd')">
+        <div class="time-field-label">Retorno Almoço</div>
+        <div class="time-field-value empty" id="val-lunchEnd">--:--</div>
+        <div class="time-field-edit">✏️</div>
+      </div>
+      <div class="time-field" id="field-exit" onclick="editField('exit')">
+        <div class="time-field-label">Saída Final</div>
+        <div class="time-field-value empty" id="val-exit">--:--</div>
+        <div class="time-field-edit">✏️</div>
+      </div>
+    </div>
+    <button id="btn-reset" onclick="confirmReset()">🗑 Limpar / Resetar dia</button>
+  </div>
+
+  <!-- Summary -->
+  <div class="card" id="summary-card">
+    <div class="card-title">📊 Resumo do Dia</div>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="summary-item-label">Manhã</div>
+        <div class="summary-item-value muted" id="sum-morning">--</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item-label">Almoço</div>
+        <div class="summary-item-value muted" id="sum-lunch">--</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item-label">Tarde</div>
+        <div class="summary-item-value muted" id="sum-afternoon">--</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item-label">Total Trabalhado</div>
+        <div class="summary-item-value muted" id="sum-total">--</div>
+      </div>
+      <div class="summary-item wide">
+        <div class="summary-item-label">Saldo (meta: 8h48m)</div>
+        <div class="summary-item-value muted" id="sum-balance">--</div>
+        <div class="balance-bar-wrap" id="balance-bar-wrap" style="display:none">
+          <div class="balance-bar" id="balance-bar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="card" id="history-card">
+    <div class="card-title">📋 Histórico de Dias</div>
+    <div class="history-list" id="history-list">
+      <div id="history-empty">Nenhum dia registrado ainda.</div>
+    </div>
+  </div>
+
+  <!-- Report -->
+  <div class="card" id="report-card">
+    <div class="card-title">📄 Relatório Mensal</div>
+    <div class="report-month-row">
+      <button class="btn-nav" onclick="changeReportMonth(-1)">‹</button>
+      <div id="report-month-label">Janeiro 2024</div>
+      <button class="btn-nav" onclick="changeReportMonth(1)">›</button>
+    </div>
+    <div class="report-stats">
+      <div class="stat-box">
+        <div class="stat-label">Dias Trabalhados</div>
+        <div class="stat-value" id="rep-days">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Total Horas</div>
+        <div class="stat-value" id="rep-total">0h00m</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Meta do Mês</div>
+        <div class="stat-value" id="rep-required">176h00m</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Saldo Acumulado</div>
+        <div class="stat-value" id="rep-balance">--</div>
+      </div>
+    </div>
+    <div class="report-btns">
+      <button class="btn-report" onclick="downloadCSV()">⬇ Baixar CSV</button>
+      <button class="btn-report" onclick="printReport()">🖨 Imprimir / PDF</button>
+    </div>
+  </div>
+</main>
+
+<!-- Edit modal -->
+<div class="modal-overlay" id="edit-modal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <h3 id="modal-title">Editar Horário</h3>
+    <label id="modal-label">Horário</label>
+    <input type="time" id="modal-time-input" />
+    <button class="btn-clear-field" onclick="clearField()">🗑 Apagar este horário</button>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveField()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm reset modal -->
+<div class="modal-overlay" id="confirm-modal" onclick="closeConfirmOutside(event)">
+  <div class="modal">
+    <div class="confirm-box">
+      <h3>⚠️ Confirmar Reset</h3>
+      <p>Tem certeza que deseja apagar todos os horários do dia <strong id="confirm-date-label"></strong>?</p>
+      <button class="btn-confirm-yes" onclick="doReset()">Sim, apagar tudo</button>
+      <button class="btn-confirm-no" onclick="closeConfirm()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Print section (hidden, shown only on print) -->
+<div id="print-section"></div>
+
+<script>
+  // ── Constants ──
+  const REQUIRED_MINUTES = 8 * 60 + 48; // 8h48m = 528min
+  const STORAGE_KEY = 'ponto_v1';
+  const FIELD_ORDER = ['entry', 'lunchStart', 'lunchEnd', 'exit'];
+  const FIELD_LABELS = {
+    entry: 'Entrada',
+    lunchStart: 'Saída Almoço',
+    lunchEnd: 'Retorno Almoço',
+    exit: 'Saída Final'
+  };
+  const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                     'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const DAYS_PT = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+
+  // ── State ──
+  let currentDate = todayString();
+  let editingField = null;
+  let reportYear, reportMonth;
+
+  // ── Storage ──
+  function loadAll() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+    catch { return {}; }
+  }
+  function saveAll(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+  function getDayData(date) {
+    const all = loadAll();
+    return all[date] || { entry: null, lunchStart: null, lunchEnd: null, exit: null };
+  }
+  function setDayData(date, dayData) {
+    const all = loadAll();
+    const isEmpty = !dayData.entry && !dayData.lunchStart && !dayData.lunchEnd && !dayData.exit;
+    if (isEmpty) { delete all[date]; }
+    else { all[date] = dayData; }
+    saveAll(all);
+  }
+
+  // ── Date helpers ──
+  function todayString() {
+    const d = new Date();
+    return d.toISOString().slice(0, 10);
+  }
+  function formatDate(dateStr) {
+    const [y, m, d] = dateStr.split('-');
+    return `${d}/${m}/${y}`;
+  }
+  function getWeekday(dateStr) {
+    const d = new Date(dateStr + 'T12:00:00');
+    return DAYS_PT[d.getDay()];
+  }
+  function timeNow() {
+    const d = new Date();
+    return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+
+  // ── Calculations ──
+  function toMin(t) {
+    if (!t) return null;
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  }
+  function fromMin(m) {
+    if (m === null) return '--';
+    const h = Math.floor(Math.abs(m) / 60);
+    const min = Math.abs(m) % 60;
+    const sign = m < 0 ? '-' : '';
+    return `${sign}${h}h${String(min).padStart(2,'0')}m`;
+  }
+  function calcDay(d) {
+    let morning = null, lunch = null, afternoon = null, total = null, balance = null;
+    if (d.entry && d.lunchStart) morning = toMin(d.lunchStart) - toMin(d.entry);
+    if (d.lunchStart && d.lunchEnd) lunch = toMin(d.lunchEnd) - toMin(d.lunchStart);
+    if (d.lunchEnd && d.exit) afternoon = toMin(d.exit) - toMin(d.lunchEnd);
+    if (morning !== null && afternoon !== null) {
+      total = morning + afternoon;
+      balance = total - REQUIRED_MINUTES;
+    }
+    return { morning, lunch, afternoon, total, balance };
+  }
+
+  // ── Next field to fill ──
+  function nextField(d) {
+    for (const f of FIELD_ORDER) {
+      if (!d[f]) return f;
+    }
+    return null;
+  }
+
+  // ── Render ──
+  function render() {
+    const d = getDayData(currentDate);
+    const calc = calcDay(d);
+
+    // Date input
+    document.getElementById('date-input').value = currentDate;
+    document.getElementById('selected-weekday').textContent =
+      getWeekday(currentDate) + ', ' + formatDate(currentDate);
+
+    // Next action
+    const next = nextField(d);
+    const na = document.getElementById('next-action');
+    if (!next) {
+      na.className = 'day-done';
+      na.innerHTML = '✅ Dia completo!';
+    } else {
+      na.className = '';
+      na.innerHTML = `Próximo: <strong>${FIELD_LABELS[next]}</strong>`;
+    }
+
+    // Mark button
+    const btn = document.getElementById('btn-mark');
+    if (!next) {
+      btn.disabled = true;
+      btn.textContent = '✅ Dia Completo';
+    } else {
+      btn.disabled = false;
+      btn.textContent = `⏰ Marcar ${FIELD_LABELS[next]} Agora`;
+    }
+
+    // Time fields
+    FIELD_ORDER.forEach(f => {
+      const val = document.getElementById(`val-${f}`);
+      const field = document.getElementById(`field-${f}`);
+      if (d[f]) {
+        val.textContent = d[f];
+        val.className = 'time-field-value';
+        field.className = 'time-field filled';
+      } else {
+        val.textContent = '--:--';
+        val.className = 'time-field-value empty';
+        field.className = f === next ? 'time-field active-next' : 'time-field';
+      }
+    });
+
+    // Summary
+    const setSum = (id, val, cls) => {
+      const el = document.getElementById(id);
+      el.textContent = val === null ? '--' : fromMin(val);
+      el.className = 'summary-item-value ' + (val === null ? 'muted' : cls);
+    };
+    setSum('sum-morning', calc.morning, 'ok');
+    setSum('sum-lunch', calc.lunch, calc.lunch !== null && calc.lunch < 60 ? 'warn' : 'muted');
+    setSum('sum-afternoon', calc.afternoon, 'ok');
+    setSum('sum-total', calc.total, calc.total !== null && calc.total >= REQUIRED_MINUTES ? 'ok' : 'warn');
+
+    const balEl = document.getElementById('sum-balance');
+    const barWrap = document.getElementById('balance-bar-wrap');
+    const bar = document.getElementById('balance-bar');
+    if (calc.balance === null) {
+      balEl.textContent = '--';
+      balEl.className = 'summary-item-value muted';
+      barWrap.style.display = 'none';
+    } else {
+      const sign = calc.balance >= 0 ? '+' : '';
+      balEl.textContent = sign + fromMin(calc.balance);
+      balEl.className = 'summary-item-value ' + (calc.balance >= 0 ? 'ok' : 'bad');
+      barWrap.style.display = 'block';
+      const pct = Math.min(100, Math.max(0, (calc.total / REQUIRED_MINUTES) * 100));
+      bar.style.width = pct + '%';
+      bar.style.background = calc.balance >= 0 ? 'var(--teal)' : 'var(--orange)';
+    }
+
+    renderHistory();
+    renderReport();
+  }
+
+  // ── History ──
+  function renderHistory() {
+    const all = loadAll();
+    const keys = Object.keys(all).sort((a, b) => b.localeCompare(a));
+    const list = document.getElementById('history-list');
+    const empty = document.getElementById('history-empty');
+
+    if (keys.length === 0) {
+      list.innerHTML = '';
+      list.appendChild(empty);
+      return;
+    }
+    list.innerHTML = '';
+    keys.forEach(k => {
+      const d = all[k];
+      const calc = calcDay(d);
+      const isSel = k === currentDate;
+      const div = document.createElement('div');
+      div.className = 'history-item' + (isSel ? ' selected' : '');
+      div.onclick = () => { currentDate = k; render(); };
+
+      const times = FIELD_ORDER.map(f => d[f] || '--').join(' · ');
+      const totalStr = calc.total !== null ? fromMin(calc.total) : '...';
+      const cls = calc.total === null ? 'partial' : (calc.total >= REQUIRED_MINUTES ? 'ok' : 'bad');
+
+      div.innerHTML = `
+        <div>
+          <div class="history-date">${DAYS_PT[new Date(k+'T12:00:00').getDay()].slice(0,3)}, ${formatDate(k)}</div>
+          <div class="history-times">${times}</div>
+        </div>
+        <div class="history-total ${cls}">${totalStr}</div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  // ── Report ──
+  function initReport() {
+    const now = new Date();
+    reportYear = now.getFullYear();
+    reportMonth = now.getMonth();
+  }
+  function changeReportMonth(delta) {
+    reportMonth += delta;
+    if (reportMonth < 0) { reportMonth = 11; reportYear--; }
+    if (reportMonth > 11) { reportMonth = 0; reportYear++; }
+    renderReport();
+  }
+  function getMonthData() {
+    const all = loadAll();
+    const prefix = `${reportYear}-${String(reportMonth + 1).padStart(2,'0')}`;
+    return Object.entries(all)
+      .filter(([k]) => k.startsWith(prefix))
+      .sort(([a],[b]) => a.localeCompare(b));
+  }
+  function countWorkingDaysInMonth(y, m) {
+    let count = 0;
+    const last = new Date(y, m + 1, 0).getDate();
+    for (let d = 1; d <= last; d++) {
+      const day = new Date(y, m, d).getDay();
+      if (day !== 0 && day !== 6) count++;
+    }
+    return count;
+  }
+  function renderReport() {
+    document.getElementById('report-month-label').textContent =
+      `${MONTHS_PT[reportMonth]} ${reportYear}`;
+    const entries = getMonthData();
+    let totalMin = 0;
+    let completeDays = 0;
+    entries.forEach(([, d]) => {
+      const c = calcDay(d);
+      if (c.total !== null) { totalMin += c.total; completeDays++; }
+    });
+    const workDays = countWorkingDaysInMonth(reportYear, reportMonth);
+    const requiredMin = workDays * REQUIRED_MINUTES;
+    const balance = completeDays > 0 ? totalMin - completeDays * REQUIRED_MINUTES : null;
+
+    document.getElementById('rep-days').textContent = `${completeDays}/${workDays}`;
+    document.getElementById('rep-total').textContent = fromMin(totalMin);
+    document.getElementById('rep-required').textContent = fromMin(requiredMin);
+    const balEl = document.getElementById('rep-balance');
+    if (balance === null) { balEl.textContent = '--'; balEl.style.color = ''; }
+    else {
+      balEl.textContent = (balance >= 0 ? '+' : '') + fromMin(balance);
+      balEl.style.color = balance >= 0 ? 'var(--teal2)' : 'var(--red)';
+    }
+  }
+
+  // ── Actions ──
+  function markNow() {
+    const d = getDayData(currentDate);
+    const next = nextField(d);
+    if (!next) return;
+    d[next] = timeNow();
+    setDayData(currentDate, d);
+    render();
+    // Haptic feedback on mobile
+    if (navigator.vibrate) navigator.vibrate(50);
+  }
+
+  function goToday() {
+    currentDate = todayString();
+    render();
+  }
+
+  function confirmReset() {
+    document.getElementById('confirm-date-label').textContent = formatDate(currentDate);
+    document.getElementById('confirm-modal').classList.add('open');
+  }
+  function closeConfirm() {
+    document.getElementById('confirm-modal').classList.remove('open');
+  }
+  function closeConfirmOutside(e) {
+    if (e.target === document.getElementById('confirm-modal')) closeConfirm();
+  }
+  function doReset() {
+    setDayData(currentDate, { entry: null, lunchStart: null, lunchEnd: null, exit: null });
+    closeConfirm();
+    render();
+  }
+
+  // ── Edit modal ──
+  function editField(field) {
+    editingField = field;
+    const d = getDayData(currentDate);
+    document.getElementById('modal-title').textContent = `Editar: ${FIELD_LABELS[field]}`;
+    document.getElementById('modal-label').textContent = `Horário de ${FIELD_LABELS[field]}`;
+    document.getElementById('modal-time-input').value = d[field] || timeNow();
+    document.getElementById('edit-modal').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('edit-modal').classList.remove('open');
+    editingField = null;
+  }
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('edit-modal')) closeModal();
+  }
+  function saveField() {
+    if (!editingField) return;
+    const val = document.getElementById('modal-time-input').value;
+    if (!val) { closeModal(); return; }
+    const d = getDayData(currentDate);
+    d[editingField] = val;
+    setDayData(currentDate, d);
+    closeModal();
+    render();
+  }
+  function clearField() {
+    if (!editingField) return;
+    const d = getDayData(currentDate);
+    d[editingField] = null;
+    setDayData(currentDate, d);
+    closeModal();
+    render();
+  }
+
+  // ── CSV Download ──
+  function downloadCSV() {
+    const entries = getMonthData();
+    let csv = 'Data,Dia,Entrada,Saída Almoço,Retorno Almoço,Saída Final,Manhã,Almoço,Tarde,Total,Saldo\n';
+    entries.forEach(([k, d]) => {
+      const c = calcDay(d);
+      const day = DAYS_PT[new Date(k+'T12:00:00').getDay()];
+      csv += [
+        formatDate(k), day,
+        d.entry||'', d.lunchStart||'', d.lunchEnd||'', d.exit||'',
+        c.morning !== null ? fromMin(c.morning) : '',
+        c.lunch !== null ? fromMin(c.lunch) : '',
+        c.afternoon !== null ? fromMin(c.afternoon) : '',
+        c.total !== null ? fromMin(c.total) : '',
+        c.balance !== null ? (c.balance >= 0 ? '+' : '') + fromMin(c.balance) : ''
+      ].join(',') + '\n';
+    });
+    // Summary
+    let totalMin = 0, completeDays = 0;
+    entries.forEach(([,d]) => { const c = calcDay(d); if (c.total !== null) { totalMin += c.total; completeDays++; } });
+    const workDays = countWorkingDaysInMonth(reportYear, reportMonth);
+    csv += `\nResumo,,,,,,,,,,\n`;
+    csv += `Dias trabalhados,${completeDays}/${workDays},,,,,,,,,\n`;
+    csv += `Total trabalhado,${fromMin(totalMin)},,,,,,,,,\n`;
+    csv += `Total obrigatório (${workDays}d × 8h48m),${fromMin(workDays * REQUIRED_MINUTES)},,,,,,,,,\n`;
+    const bal = completeDays > 0 ? totalMin - completeDays * REQUIRED_MINUTES : 0;
+    csv += `Saldo acumulado,${(bal >= 0 ? '+' : '') + fromMin(bal)},,,,,,,,,\n`;
+
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ponto_${MONTHS_PT[reportMonth].toLowerCase()}_${reportYear}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── Print / PDF ──
+  function printReport() {
+    const entries = getMonthData();
+    let totalMin = 0, completeDays = 0;
+    entries.forEach(([,d]) => { const c = calcDay(d); if (c.total !== null) { totalMin += c.total; completeDays++; } });
+    const workDays = countWorkingDaysInMonth(reportYear, reportMonth);
+    const requiredMin = workDays * REQUIRED_MINUTES;
+    const balance = totalMin - completeDays * REQUIRED_MINUTES;
+
+    let rows = entries.map(([k, d]) => {
+      const c = calcDay(d);
+      const day = DAYS_PT[new Date(k+'T12:00:00').getDay()].slice(0,3);
+      const bal = c.balance !== null ? (c.balance >= 0 ? '+' : '') + fromMin(c.balance) : '';
+      const balColor = c.balance === null ? '' : (c.balance >= 0 ? 'color:#27ae60' : 'color:#e74c3c');
+      return `<tr>
+        <td>${day}</td>
+        <td>${formatDate(k)}</td>
+        <td>${d.entry||'--'}</td>
+        <td>${d.lunchStart||'--'}</td>
+        <td>${d.lunchEnd||'--'}</td>
+        <td>${d.exit||'--'}</td>
+        <td>${c.total !== null ? fromMin(c.total) : '--'}</td>
+        <td style="${balColor}">${bal}</td>
+      </tr>`;
+    }).join('');
+
+    const balSign = balance >= 0 ? '+' : '';
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>Ponto – ${MONTHS_PT[reportMonth]} ${reportYear}</title>
+    <style>
+      body{font-family:Arial,sans-serif;font-size:12px;padding:20px;color:#222}
+      h1{font-size:18px;margin-bottom:4px}
+      h2{font-size:13px;color:#555;font-weight:normal;margin-bottom:16px}
+      table{width:100%;border-collapse:collapse;margin-bottom:20px}
+      th{background:#1a2a4a;color:#fff;padding:6px 8px;text-align:left;font-size:11px}
+      td{padding:5px 8px;border-bottom:1px solid #eee}
+      tr:hover td{background:#f9f9f9}
+      .summary{display:flex;gap:20px;flex-wrap:wrap}
+      .sbox{background:#f5f5f5;padding:12px 16px;border-radius:6px;min-width:120px}
+      .slabel{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px}
+      .sval{font-size:1.3rem;font-weight:700;margin-top:2px}
+    </style>
+    </head><body>
+    <h1>Relatório de Ponto</h1>
+    <h2>${MONTHS_PT[reportMonth]} ${reportYear}</h2>
+    <table>
+      <thead><tr><th>Dia</th><th>Data</th><th>Entrada</th><th>Saída Alm.</th><th>Ret. Alm.</th><th>Saída</th><th>Total</th><th>Saldo</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="8" style="text-align:center;color:#aaa">Nenhum registro</td></tr>'}</tbody>
+    </table>
+    <div class="summary">
+      <div class="sbox"><div class="slabel">Dias trabalhados</div><div class="sval">${completeDays}/${workDays}</div></div>
+      <div class="sbox"><div class="slabel">Total trabalhado</div><div class="sval">${fromMin(totalMin)}</div></div>
+      <div class="sbox"><div class="slabel">Obrigatório (${workDays}d)</div><div class="sval">${fromMin(requiredMin)}</div></div>
+      <div class="sbox"><div class="slabel">Saldo acumulado</div><div class="sval" style="color:${balance >= 0 ? '#27ae60':'#e74c3c'}">${balSign}${fromMin(balance)}</div></div>
+    </div>
+    <p style="margin-top:30px;font-size:10px;color:#bbb">Gerado em ${new Date().toLocaleString('pt-BR')} · Relógio de Ponto</p>
+    </body></html>`;
+
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write(html);
+      w.document.close();
+      setTimeout(() => w.print(), 400);
+    }
+  }
+
+  // ── Live clock ──
+  function updateClock() {
+    const now = new Date();
+    const time = [now.getHours(), now.getMinutes(), now.getSeconds()]
+      .map(n => String(n).padStart(2,'0')).join(':');
+    document.getElementById('live-clock').textContent = time;
+    const opts = { weekday:'long', day:'2-digit', month:'long', year:'numeric' };
+    document.getElementById('live-date-label').textContent =
+      now.toLocaleDateString('pt-BR', opts);
+  }
+
+  // ── Init ──
+  document.getElementById('date-input').addEventListener('change', e => {
+    currentDate = e.target.value;
+    render();
+  });
+  document.getElementById('modal-time-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveField();
+    if (e.key === 'Escape') closeModal();
+  });
+
+  initReport();
+  updateClock();
+  setInterval(updateClock, 1000);
+  render();
+</script>
+</body>
+</html>
