@@ -8,6 +8,7 @@ Pode ser acessado direto no navegador ou instalado na tela inicial do celular co
 ---
 
 ## 🚀 Funcionalidades
+
 - Lista de categorias (Mineração, Cooperativismo, Política Local, Economia).
 - Busca por título ou descrição.
 - Leitor integrado (abre notícia completa em modal).
@@ -15,9 +16,19 @@ Pode ser acessado direto no navegador ou instalado na tela inicial do celular co
 - Instalável como **PWA** (funciona offline básico).
 - Atualização fácil via arquivo `noticias.json`.
 
+## 🎨 Paleta de cores por categoria
+
+| Categoria        | Cor       |
+|------------------|-----------|
+| Mineração        | `#f59e0b` |
+| Cooperativismo   | `#8b5cf6` |
+| Economia         | `#10b981` |
+| Política Local   | `#ef4444` |
+
 ---
 
 ## 📰 Como atualizar as notícias
+
 1. Entre no repositório no GitHub.
 2. Abra o arquivo `noticias.json`.
 3. Clique no ícone do **lápis** (editar).
@@ -33,6 +44,22 @@ Pode ser acessado direto no navegador ou instalado na tela inicial do celular co
   "data": "2025-09-08",
   "link": "https://exemplo.com"
 }
+```
+
+Use apenas endereços `http://` ou `https://` nos campos `link` e `imagem`. Links ausentes ou inválidos não são exibidos.
+
+## ✅ Verificação local
+
+Este é um projeto estático e não usa `package.json`. Para verificar a sintaxe do JavaScript, as referências dos arquivos e o formato das notícias, execute:
+
+```bash
+node --check app.js
+node scripts/verify-static.mjs
+```
+
+## 📁 Estrutura
+
+```text
 local-pulse/
 ├─ index.html
 ├─ styles.css
@@ -40,5 +67,8 @@ local-pulse/
 ├─ noticias.json
 ├─ manifest.webmanifest
 ├─ sw.js
+├─ scripts/
+│  └─ verify-static.mjs
 ├─ icon-192.png
 └─ icon-512.png
+```

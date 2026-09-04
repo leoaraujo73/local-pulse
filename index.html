@@ -17,7 +17,7 @@
   <!-- Cabeçalho -->
   <header class="app-header">
     <h1>Local Pulse</h1>
-    <input id="searchInput" class="search" placeholder="Buscar notícias..." />
+    <input id="searchInput" class="search" type="search" aria-label="Buscar notícias" placeholder="Buscar notícias..." />
   </header>
 
   <!-- Filtros de categoria -->
@@ -54,7 +54,7 @@
       <p class="reader-meta"><time id="readerDate"></time></p>
       <div id="readerBody" class="reader-body"></div>
       <footer class="reader-footer">
-        <a id="readerLink" class="btn" target="__blank" rel="noopener">Abrir fonte</a>
+        <a id="readerLink" class="btn" target="_blank" rel="noopener noreferrer">Abrir fonte</a>
       </footer>
     </article>
   </dialog>
@@ -72,4 +72,3 @@
   </script>
 </body>
 </html>
-

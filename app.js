@@ -4,6 +4,34 @@ const state = {
   activeCat: 'Todas',
 };
 
+// Mapeia categorias para cores de identificação nos cards
+const categoryColors = {
+  'Mineração': '#f59e0b',      // âmbar
+  'Cooperativismo': '#8b5cf6', // violeta
+  'Economia': '#10b981',       // verde
+  'Política Local': '#ef4444', // vermelho
+};
+
+function getHttpUrl(value) {
+  if (typeof value !== 'string' || value.trim() === '') return null;
+
+  try {
+    const url = new URL(value);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
+function applyCategoryColor(element, category) {
+  const color = categoryColors[category];
+  if (!color) return;
+
+  element.style.background = color;
+  element.style.borderColor = color;
+  element.style.color = '#0b1220';
+}
+
 async function loadData() {
   const res = await fetch('./noticias.json?_=' + Date.now());
   if (!res.ok) throw new Error('Falha ao carregar noticias.json');
@@ -52,17 +80,75 @@ function renderFeed() {
   }
 
   state.filtered
-    .sort((a,b) => new Date(b.data) - new Date(a.data))
-    .forEach(item => {
-      const node = tpl.content.cloneNode(true);
-      node.querySelector('[data-category]').textContent = item.categoria;
-      node.querySelector('[data-date]').textContent = formatDate(item.data);
-      node.querySelector('[data-title]').textContent = item.titulo;
-      node.querySelector('[data-desc]').textContent = item.descricao || '';
+      .sort((a,b) => new Date(b.data) - new Date(a.data))
+      .forEach(item => {
+        const node = tpl.content.cloneNode(true);
+        const catEl = node.querySelector('[data-category]');
+        catEl.textContent = item.categoria;
+        applyCategoryColor(catEl, item.categoria);
+        node.querySelector('[data-date]').textContent = formatDate(item.data);
+        node.querySelector('[data-title]').textContent = item.titulo;
+        node.querySelector('[data-desc]').textContent = item.descricao || '';
 
-      // IMAGEM no card: só aparece se tiver URL válida
-      const imgEl = node.querySelector('[data-img]');
-      if (item.imagem && /^https?:\/\//i.test(item.imagem)) {
-        imgEl.src = item.imagem;
-        imgEl.alt = item.titulo || 'imagem da notícia';
-        imgEl.style.display = 'block';
+        const imageUrl = getHttpUrl(item.imagem);
+        const image = node.querySelector('[data-img]');
+        if (imageUrl) {
+          image.src = imageUrl;
+          image.alt = item.titulo || 'Imagem da notícia';
+          image.style.display = 'block';
+          image.addEventListener('error', () => {
+            image.style.display = 'none';
+          }, { once: true });
+        }
+
+        const sourceUrl = getHttpUrl(item.link);
+        const sourceLink = node.querySelector('[data-link]');
+        if (sourceUrl) {
+          sourceLink.href = sourceUrl;
+        } else {
+          sourceLink.style.display = 'none';
+        }
+
+        node.querySelector('[data-open]').addEventListener('click', () => openReader(item));
+        feed.appendChild(node);
+      });
+}
+
+function openReader(item) {
+  const dlg = document.getElementById('reader');
+  const readerCategory = document.getElementById('readerCat');
+  readerCategory.removeAttribute('style');
+  readerCategory.textContent = item.categoria;
+  applyCategoryColor(readerCategory, item.categoria);
+  document.getElementById('readerTitle').textContent = item.titulo;
+  document.getElementById('readerDate').textContent = formatDate(item.data);
+  document.getElementById('readerBody').textContent = item.conteudo || item.descricao || '';
+  const link = document.getElementById('readerLink');
+  const sourceUrl = getHttpUrl(item.link);
+  if (sourceUrl) {
+    link.href = sourceUrl;
+    link.style.display = 'inline-flex';
+  } else {
+    link.removeAttribute('href');
+    link.style.display = 'none';
+  }
+  dlg.showModal();
+}
+
+function setupEvents() {
+  document.getElementById('searchInput').addEventListener('input', filterAndRender);
+  document.getElementById('closeReader').addEventListener('click', () => {
+    document.getElementById('reader').close();
+  });
+}
+
+(async function init(){
+  try {
+    await loadData();
+    setupEvents();
+    renderCategories();
+    filterAndRender();
+  } catch (e) {
+    document.getElementById('feed').innerHTML = '<p style="color:#fca5a5">Erro: '+ e.message +'</p>';
+  }
+})();
