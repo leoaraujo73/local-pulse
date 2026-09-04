@@ -1,0 +1,22 @@
+name: Static checks
+
+on:
+  pull_request:
+  push:
+    branches: [local-pulse]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check JavaScript syntax
+        run: node --check app.js
+      - name: Verify static files and news data
+        run: node scripts/verify-static.mjs

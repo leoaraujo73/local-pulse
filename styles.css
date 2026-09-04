@@ -168,7 +168,11 @@ body {
   align-items: center;
 }
 .reader-meta { color: var(--muted); margin: 8px 0; }
-.reader-body { line-height: 1.65; color: var(--text); }
+.reader-body {
+  line-height: 1.65;
+  color: var(--text);
+  white-space: pre-line;
+}
 .reader-footer {
   margin-top: 16px;
   display: flex;
@@ -177,4 +181,3 @@ body {
 
 /* Acessibilidade: foco visível */
 :focus { outline: 2px solid var(--brand); outline-offset: 2px; }
-

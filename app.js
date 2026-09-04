@@ -12,6 +12,26 @@ const categoryColors = {
   'Política Local': '#ef4444', // vermelho
 };
 
+function getHttpUrl(value) {
+  if (typeof value !== 'string' || value.trim() === '') return null;
+
+  try {
+    const url = new URL(value);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
+function applyCategoryColor(element, category) {
+  const color = categoryColors[category];
+  if (!color) return;
+
+  element.style.background = color;
+  element.style.borderColor = color;
+  element.style.color = '#0b1220';
+}
+
 async function loadData() {
   const res = await fetch('./noticias.json?_=' + Date.now());
   if (!res.ok) throw new Error('Falha ao carregar noticias.json');
@@ -65,15 +85,30 @@ function renderFeed() {
         const node = tpl.content.cloneNode(true);
         const catEl = node.querySelector('[data-category]');
         catEl.textContent = item.categoria;
-        const color = categoryColors[item.categoria];
-        if (color) {
-          catEl.style.background = color;
-          catEl.style.borderColor = color;
-        }
+        applyCategoryColor(catEl, item.categoria);
         node.querySelector('[data-date]').textContent = formatDate(item.data);
         node.querySelector('[data-title]').textContent = item.titulo;
         node.querySelector('[data-desc]').textContent = item.descricao || '';
-        node.querySelector('[data-link]').href = item.link || '#';
+
+        const imageUrl = getHttpUrl(item.imagem);
+        const image = node.querySelector('[data-img]');
+        if (imageUrl) {
+          image.src = imageUrl;
+          image.alt = item.titulo || 'Imagem da notícia';
+          image.style.display = 'block';
+          image.addEventListener('error', () => {
+            image.style.display = 'none';
+          }, { once: true });
+        }
+
+        const sourceUrl = getHttpUrl(item.link);
+        const sourceLink = node.querySelector('[data-link]');
+        if (sourceUrl) {
+          sourceLink.href = sourceUrl;
+        } else {
+          sourceLink.style.display = 'none';
+        }
+
         node.querySelector('[data-open]').addEventListener('click', () => openReader(item));
         feed.appendChild(node);
       });
@@ -81,14 +116,22 @@ function renderFeed() {
 
 function openReader(item) {
   const dlg = document.getElementById('reader');
-  document.getElementById('readerCat').textContent = item.categoria;
+  const readerCategory = document.getElementById('readerCat');
+  readerCategory.removeAttribute('style');
+  readerCategory.textContent = item.categoria;
+  applyCategoryColor(readerCategory, item.categoria);
   document.getElementById('readerTitle').textContent = item.titulo;
   document.getElementById('readerDate').textContent = formatDate(item.data);
-  document.getElementById('readerBody').innerHTML = (item.conteudo || item.descricao || '')
-    .replace(/\n/g, '<br/>');
+  document.getElementById('readerBody').textContent = item.conteudo || item.descricao || '';
   const link = document.getElementById('readerLink');
-  if (item.link) { link.href = item.link; link.style.display = 'inline-flex'; }
-  else { link.style.display = 'none'; }
+  const sourceUrl = getHttpUrl(item.link);
+  if (sourceUrl) {
+    link.href = sourceUrl;
+    link.style.display = 'inline-flex';
+  } else {
+    link.removeAttribute('href');
+    link.style.display = 'none';
+  }
   dlg.showModal();
 }
 
